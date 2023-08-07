@@ -64,10 +64,11 @@ type ProcessInfo_v2 struct {
 }
 
 type ProcessInfo struct {
-	Pid               uint32
-	UsedGpuMemory     uint64
-	GpuInstanceId     uint32
-	ComputeInstanceId uint32
+	Pid                      uint32
+	UsedGpuMemory            uint64
+	GpuInstanceId            uint32
+	ComputeInstanceId        uint32
+	UsedGpuCcProtectedMemory uint64
 }
 
 type DeviceAttributes struct {
@@ -119,17 +120,9 @@ type ViolationTime struct {
 	ViolationTime uint64
 }
 
-type GpuThermalSettingsSensor struct {
-	Controller     int32
-	DefaultMinTemp int32
-	DefaultMaxTemp int32
-	CurrentTemp    int32
-	Target         int32
-}
-
 type GpuThermalSettings struct {
 	Count  uint32
-	Sensor [3]GpuThermalSettingsSensor
+	Sensor [3]_Ctype_struct___12
 }
 
 type ClkMonFaultInfo struct {
@@ -167,15 +160,6 @@ type VgpuProcessUtilizationSample struct {
 	DecUtil      uint32
 }
 
-type VgpuSchedulerParamsVgpuSchedDataWithARR struct {
-	AvgFactor uint32
-	Timeslice uint32
-}
-
-type VgpuSchedulerParamsVgpuSchedData struct {
-	Timeslice uint32
-}
-
 const sizeofVgpuSchedulerParams = unsafe.Sizeof([8]byte{})
 
 type VgpuSchedulerParams [sizeofVgpuSchedulerParams]byte
@@ -202,15 +186,6 @@ type VgpuSchedulerGetState struct {
 	SchedulerPolicy uint32
 	IsEnabledARR    uint32
 	SchedulerParams [8]byte
-}
-
-type VgpuSchedulerSetParamsVgpuSchedDataWithARR struct {
-	AvgFactor uint32
-	Frequency uint32
-}
-
-type VgpuSchedulerSetParamsVgpuSchedData struct {
-	Timeslice uint32
 }
 
 const sizeofVgpuSchedulerSetParams = unsafe.Sizeof([8]byte{})
@@ -294,16 +269,9 @@ type FanControlPolicy uint32
 
 type PowerSource uint32
 
-type GpuDynamicPstatesInfoUtilization struct {
-	BIsPresent   uint32
-	Percentage   uint32
-	IncThreshold uint32
-	DecThreshold uint32
-}
-
 type GpuDynamicPstatesInfo struct {
 	Flags       uint32
-	Utilization [8]GpuDynamicPstatesInfoUtilization
+	Utilization [8]_Ctype_struct___9
 }
 
 type FieldValue struct {
@@ -408,6 +376,38 @@ type FBCSessionInfo struct {
 	AverageLatency uint32
 }
 
+type ConfComputeSystemCaps struct {
+	CpuCaps  uint32
+	GpusCaps uint32
+}
+
+type ConfComputeSystemState struct {
+	Environment  uint32
+	CcFeature    uint32
+	DevToolsMode uint32
+}
+
+type ConfComputeMemSizeInfo struct {
+	ProtectedMemSizeKib   uint64
+	UnprotectedMemSizeKib uint64
+}
+
+type ConfComputeGpuCertificate struct {
+	CertChainSize            uint32
+	AttestationCertChainSize uint32
+	CertChain                [4096]uint8
+	AttestationCertChain     [5120]uint8
+}
+
+type ConfComputeGpuAttestationReport struct {
+	IsCecAttestationReportPresent uint32
+	AttestationReportSize         uint32
+	CecAttestationReportSize      uint32
+	Nonce                         [32]uint8
+	AttestationReport             [8192]uint8
+	CecAttestationReport          [4096]uint8
+}
+
 type GpuFabricState byte
 
 type GpuFabricInfo struct {
@@ -416,6 +416,14 @@ type GpuFabricInfo struct {
 	PartitionId uint32
 	State       uint8
 	Pad_cgo_0   [3]byte
+}
+
+type PowerScopeType byte
+
+type PowerValue_v2 struct {
+	Version      uint32
+	PowerScope   uint8
+	PowerValueMw uint32
 }
 
 type AffinityScope uint32
@@ -552,17 +560,11 @@ type GpmSample struct {
 	Handle *_Ctype_struct_nvmlGpmSample_st
 }
 
-type GpmMetricMetricInfo struct {
-	ShortName *int8
-	LongName  *int8
-	Unit      *int8
-}
-
 type GpmMetric struct {
 	MetricId   uint32
 	NvmlReturn uint32
 	Value      float64
-	MetricInfo GpmMetricMetricInfo
+	MetricInfo _Ctype_struct___5
 }
 
 type GpmMetricsGetType struct {
